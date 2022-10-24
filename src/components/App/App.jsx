@@ -1,5 +1,3 @@
-import { useState, useEffect } from 'react';
-import { nanoid } from 'nanoid';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ContactForm } from 'components/ContactForm';
@@ -9,41 +7,30 @@ import { Section } from 'components/Section';
 import { Title } from 'components/Title';
 import { Container } from 'components/App/App.styled';
 import { Notification } from 'components/Notification';
-import { storage } from 'service/storage';
 
-const LS_KEY = 'contacts';
+import { useSelector, useDispatch } from 'react-redux';
+import { addContact, deleteContact } from 'redux/contactsSlice';
+import { setFilter } from 'redux/filterSlice';
+import { getContacts, getFilter } from 'redux/selectors';
 
 export const App = () => {
-  const [contacts, setContacts] = useState(() => {
-    return storage.load(LS_KEY) ?? [];
-  });
-  const [filter, setFilter] = useState('');
+  const contacts = useSelector(getContacts);
+  const filter = useSelector(getFilter);
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    storage.save(LS_KEY, contacts);
-  }, [contacts]);
-
-  const addContact = contact => {
+  const handleAddContact = contact => {
     if (checkDublicate(contact)) {
       toast.error(
         `${contact.name} is already in contacts. Please add a new contact.`
       );
       return;
     }
-    setContacts(prevContacts => {
-      const newContacts = {
-        id: nanoid(),
-        ...contact,
-      };
-      return [newContacts, ...prevContacts];
-    });
+
+    dispatch(addContact(contact));
   };
 
-  const deleteContact = id => {
-    setContacts(prevContacts => {
-      const newContacts = prevContacts.filter(contact => contact.id !== id);
-      return newContacts;
-    });
+  const handleDeleteContact = id => {
+    dispatch(deleteContact(id));
   };
 
   const getVisibleContacts = () => {
@@ -63,7 +50,7 @@ export const App = () => {
 
   const changeFilter = evt => {
     const { value } = evt.target;
-    setFilter(value);
+    dispatch(setFilter(value));
   };
 
   const checkDublicate = ({ name, number }) => {
@@ -78,13 +65,13 @@ export const App = () => {
   return (
     <Container>
       <Title title={'Phonebook'} />
-      <ContactForm addContact={addContact} />
+      <ContactForm addContact={handleAddContact} />
       <Section title={'Contacts'}>
         <Filter value={filter} changeFilter={changeFilter} />
         {visibleContacts.length !== 0 ? (
           <ContactList
             visibleContacts={visibleContacts}
-            deleteContact={deleteContact}
+            deleteContact={handleDeleteContact}
           />
         ) : (
           <Notification message="You don't have contacts yet..." />
@@ -94,5 +81,3 @@ export const App = () => {
     </Container>
   );
 };
-
-// Test deploy
