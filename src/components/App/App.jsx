@@ -1,4 +1,4 @@
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ContactForm } from 'components/ContactForm';
 import { ContactList } from 'components/ContactList';
@@ -9,7 +9,7 @@ import { Container } from 'components/App/App.styled';
 import { Notification } from 'components/Notification';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { addContact, deleteContact } from 'redux/contactsSlice';
+import { deleteContact } from 'redux/contactsSlice';
 import { setFilter } from 'redux/filterSlice';
 import { getContacts, getFilter } from 'redux/selectors';
 
@@ -18,16 +18,16 @@ export const App = () => {
   const filter = useSelector(getFilter);
   const dispatch = useDispatch();
 
-  const handleAddContact = contact => {
-    if (checkDublicate(contact)) {
-      toast.error(
-        `${contact.name} is already in contacts. Please add a new contact.`
-      );
-      return;
-    }
+  // const handleAddContact = contact => {
+  //   if (checkDublicate(contact)) {
+  //     toast.error(
+  //       `${contact.name} is already in contacts. Please add a new contact.`
+  //     );
+  //     return;
+  //   }
 
-    dispatch(addContact(contact));
-  };
+  //   dispatch(addContact(contact));
+  // };
 
   const handleDeleteContact = id => {
     dispatch(deleteContact(id));
@@ -53,19 +53,20 @@ export const App = () => {
     dispatch(setFilter(value));
   };
 
-  const checkDublicate = ({ name, number }) => {
-    const result = contacts.find(
-      contact => contact.name === name && contact.number === number
-    );
-    return result;
-  };
+  // const checkDublicate = ({ name, number }) => {
+  //   const result = contacts.find(
+  //     contact => contact.name === name && contact.number === number
+  //   );
+  //   return result;
+  // };
 
   const visibleContacts = getVisibleContacts();
 
   return (
     <Container>
       <Title title={'Phonebook'} />
-      <ContactForm addContact={handleAddContact} />
+      {/* <ContactForm addContact={handleAddContact} /> */}
+      <ContactForm />
       <Section title={'Contacts'}>
         <Filter value={filter} changeFilter={changeFilter} />
         {visibleContacts.length !== 0 ? (
