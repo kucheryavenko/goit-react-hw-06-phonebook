@@ -1,8 +1,8 @@
-import { nanoid } from 'nanoid';
-import { Label, Input } from 'components/Filter/Filter.styled';
 import { useSelector, useDispatch } from 'react-redux';
 import { getFilter } from 'redux/selectors';
 import { setFilter } from 'redux/filterSlice';
+import { nanoid } from 'nanoid';
+import { Label, Input } from 'components/Filter/Filter.styled';
 
 export const Filter = () => {
   const searchId = nanoid();
