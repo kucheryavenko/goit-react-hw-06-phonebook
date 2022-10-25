@@ -13,38 +13,13 @@ import { addContact } from 'redux/contactsSlice';
 import { getContacts } from 'redux/selectors';
 
 export const ContactForm = () => {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
   const contacts = useSelector(getContacts);
   const dispatch = useDispatch();
 
-  const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
-
   const nameId = nanoid();
   const numberId = nanoid();
-
-  const handleAddContact = contact => {
-    if (checkDublicate(contact)) {
-      toast.error(
-        `${contact.name} is already in contacts. Please add a new contact.`
-      );
-      return;
-    }
-
-    dispatch(addContact(contact));
-  };
-
-  const checkDublicate = ({ name, number }) => {
-    const result = contacts.find(
-      contact => contact.name === name && contact.number === number
-    );
-    return result;
-  };
-
-  const handleSubmit = evt => {
-    evt.preventDefault();
-    handleAddContact({ name, number });
-    reset();
-  };
 
   const handleChange = evt => {
     const { name, value } = evt.target;
@@ -56,6 +31,25 @@ export const ContactForm = () => {
       default:
         return;
     }
+  };
+
+  const handleSubmit = evt => {
+    evt.preventDefault();
+
+    if (checkDublicate({ name, number })) {
+      toast.error(`${name} is already in contacts. Please add a new contact.`);
+      return;
+    }
+
+    dispatch(addContact({ name, number }));
+    reset();
+  };
+
+  const checkDublicate = ({ name, number }) => {
+    const result = contacts.find(
+      contact => contact.name === name && contact.number === number
+    );
+    return result;
   };
 
   const reset = () => {
